@@ -38,6 +38,14 @@ public class ShopManagerScript : MonoBehaviour
         shopItems[3, 3] = 0;
         shopItems[3, 4] = 0;
 
+        // Stock available 
+
+        shopItems[4, 1] = 1;
+        shopItems[4, 2] = 1;
+        shopItems[4, 3] = 1;
+        shopItems[4, 4] = 1;
+
+
 
 
 
@@ -50,18 +58,29 @@ public class ShopManagerScript : MonoBehaviour
     public void Buy()
     {
         GameObject ButtonRef = GameObject.FindGameObjectWithTag("Event").GetComponent<EventSystem>().currentSelectedGameObject;
+        int itemID = ButtonRef.GetComponent<Buttoninfo>().ItemID;
 
-        if (coins >= shopItems[2, ButtonRef.GetComponent<Buttoninfo>().ItemID])
+        if (shopItems[4, itemID] > 0 && coins >= shopItems[2, itemID])
         {
-            coins -= shopItems[2, ButtonRef.GetComponent<Buttoninfo>().ItemID];
-            shopItems[3, ButtonRef.GetComponent<Buttoninfo>().ItemID]++;
-            CoinsTXT.text = "Coins:" + coins.ToString();
-            ButtonRef.GetComponent<Buttoninfo>().QuantityTxt.text = shopItems[3, ButtonRef.GetComponent<Buttoninfo>().ItemID].ToString();
-
+            coins -= shopItems[2, itemID];
+            shopItems[3, itemID]++; // Increase purchased quantity
+            shopItems[4, itemID]--; // Decrease stock
+            CoinsTXT.text = "Coins: " + coins.ToString();
+            ButtonRef.GetComponent<Buttoninfo>().QuantityTxt.text = "Purchased: " + shopItems[3, itemID].ToString();
+            ButtonRef.GetComponent<Buttoninfo>().StockTxt.text = "Stock: " + shopItems[4, itemID].ToString();
+        }
+        else if (shopItems[4, itemID] <= 0)
+        {
+            Debug.Log("Out of stock!");
+        }
+        else if (coins < shopItems[2, itemID])
+        {
+            Debug.Log("Not enough coins!");
         }
 
 
 
-        
+
+
     }
 }
